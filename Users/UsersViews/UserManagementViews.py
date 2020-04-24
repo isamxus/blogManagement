@@ -12,12 +12,20 @@ def createUserHandler(request):
 @csrf_exempt
 def updateUserHandler(request):
 	return UserSqlHandler.Data_Handler(UserSqlHandler, Users, request, 'update', extra={
-			'onlyUpdate': ['UserName', 'UserHeadImg'],
+			'onlyUpdate': ['UserName', 'UserHeadImg', 'Jurisdiction'],
 			'needReturnData': True,
 			'ignoreFields': ['PassWord'],
 			'ReturnFields': 'UserInfo'
 		})
 
+
+#更新用户权限
+@csrf_exempt
+def updateUserAuthHandler(request):
+	return UserSqlHandler.Data_Handler(UserSqlHandler, Users, request, 'update', extra={
+			'onlyUpdate': ['Jurisdiction'],
+			'ignoreFields': ['PassWord'],
+		})
 #获取一个用户信息
 '''@csrf_exempt
 def getSingleUserHandler(request):
