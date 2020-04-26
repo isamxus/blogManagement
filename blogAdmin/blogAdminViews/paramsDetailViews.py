@@ -1,5 +1,6 @@
 from django.views.decorators.csrf import csrf_exempt
 from ..models import ParamsSettings,ParamsContent
+from blogIndex.models import ArticleDetail
 from myblogdjango.base import DataSqlHandler
 
 #添加参数
@@ -20,7 +21,14 @@ def getSingleDetailHandler(request):
 #删除参数
 @csrf_exempt
 def deleteDetailHandler(request):
-	return DataSqlHandler.Data_Handler(DataSqlHandler, ParamsContent, request, 'delete')
+	return DataSqlHandler.Data_Handler(DataSqlHandler, ParamsContent, request, 'delete', extra={
+			'ConnectModel':[
+				{
+					'ForeignModel': ArticleDetail,
+					'ForeignKey': 'articleCagetoryID'
+				}
+			] 
+		})
 
 
 #获取参数列表
