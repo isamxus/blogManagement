@@ -184,11 +184,17 @@ class DataSqlHandler(object):
 	def Delete_Data_Handler(self, ModelClass, PostData, extra):
 		try:
 			primary_key = self.return_primary_key(self, ModelClass)
+			ForeignModel = self.Is_In_Dict(self, 'ForeignModel', extra, False)
+			ForeignKey = self.Is_In_Dict(self, 'ForeignKey', extra, False)
 			extra['mustFields'] = [primary_key]
 			response = self.mustFieldsCheck(self, ModelClass, PostData, extra)
 			if type(response).__name__ != 'dict':
 				return response
 			get_object_or_404(ModelClass, pk=PostData[primary_key]).delete()
+			if ForeignModel and ForeignKey:
+				_filter = {}
+				_filter[ForeignKey] = PostData[primary_key]
+				ForeignModel.objects.filter(**_filter).delete()
 			return self.ResponseHandler(self, True, extra=extra)
 		except Exception as e:
 			return self.ResponseHandler(self, False ,extra=extra)

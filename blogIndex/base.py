@@ -2,11 +2,10 @@ from myblogdjango.base import DataSqlHandler
 from django.shortcuts import get_object_or_404
 
 class IndexSqlHandler(DataSqlHandler):
-	#添加数据
+	#获取文章详情
 	def Get_Single_Handler(self, ModelClass, request, extra={}):
 		try:
 			extra = self.loginStatus(self, request, extra)
-			print(extra)
 			requestData = self.RequestHandler(self, request)
 			primary_key = self.return_primary_key(self, ModelClass)
 			extra['mustFields'] = [primary_key]

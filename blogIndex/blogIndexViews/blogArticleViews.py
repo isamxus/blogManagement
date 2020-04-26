@@ -1,5 +1,5 @@
 from django.views.decorators.csrf import csrf_exempt
-from ..models import ArticleDetail
+from ..models import ArticleDetail, IndexImageManagement
 from ..base import IndexSqlHandler
 from myblogdjango.base import DataSqlHandler
 
@@ -21,7 +21,10 @@ def getSingleArticleHandler(request):
 #删除文章
 @csrf_exempt
 def deleteArticleHandler(request):
-	return DataSqlHandler.Data_Handler(DataSqlHandler, ArticleDetail, request, 'delete')
+	return DataSqlHandler.Data_Handler(DataSqlHandler, ArticleDetail, request, 'delete', extra={
+			'ForeignModel': IndexImageManagement,
+			'ForeignKey': 'ConnectArticleID'
+		})
 
 
 #获取文章列表 (不分页)
