@@ -180,6 +180,26 @@ class DataSqlHandler(object):
 		except Exception as e:
 			return self.ResponseHandler(self, False, extra=extra)
 
+	#递归删除数据
+	def Recursion_Delete_Handler(self, arr, PostData, primary_key):
+		try:
+			for model in arr:
+				ForeignModel = self.Is_In_Dict(self, 'ForeignModel', model, False)
+				ForeignKey = self.Is_In_Dict(self, 'ForeignKey', model, False)
+				DeleteAll = self.Is_In_Dict(self, 'DeleteAll', model, False)
+				children = self.Is_In_Dict(self, 'children', model, False)
+				lock = self.Is_In_Dict(self, 'lock', model, [])
+				lockkey = self.Is_In_Dict(self, 'lockkey', model, False)
+				if DeleteAll and lockkey and (PostData[lockkey] in lock):
+					ForeignModel.objects.all().delete()
+				if ForeignKey and ForeignModel and not DeleteAll:
+					_filter = {}
+					_filter[ForeignKey] = PostData[primary_key]
+					ForeignModel.objects.filter(**_filter).delete()
+				if children:
+					return self.Recursion_Delete_Handler(self, children, PostData, primary_key)
+		except Exception as e:
+			print(e)
 	#删除数据
 	def Delete_Data_Handler(self, ModelClass, PostData, extra):
 		try:
@@ -191,13 +211,7 @@ class DataSqlHandler(object):
 				return response
 			get_object_or_404(ModelClass, pk=PostData[primary_key]).delete()
 			if ConnectModel:
-				for model in ConnectModel:
-					ForeignModel = self.Is_In_Dict(self, 'ForeignModel', model, False)
-					ForeignKey = self.Is_In_Dict(self, 'ForeignKey', model, False)
-					if ForeignKey and ForeignModel:
-						_filter = {}
-						_filter[ForeignKey] = PostData[primary_key]
-						ForeignModel.objects.filter(**_filter).delete()
+				self.Recursion_Delete_Handler(self, ConnectModel, PostData, primary_key)
 			return self.ResponseHandler(self, True, extra=extra)
 		except Exception as e:
 			return self.ResponseHandler(self, False ,extra=extra)

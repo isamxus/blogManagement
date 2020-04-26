@@ -1,6 +1,6 @@
 from django.views.decorators.csrf import csrf_exempt
 from ..models import ParamsSettings,ParamsContent
-from blogIndex.models import ArticleDetail
+from blogIndex.models import ArticleDetail, CommentDetail
 from myblogdjango.base import DataSqlHandler
 
 #添加参数
@@ -25,8 +25,17 @@ def deleteDetailHandler(request):
 			'ConnectModel':[
 				{
 					'ForeignModel': ArticleDetail,
-					'ForeignKey': 'articleCagetoryID'
-				}
+					'ForeignKey': 'articleCagetoryID',
+					'children': [
+						{
+							'ForeignModel': CommentDetail,
+							'ForeignKey': 'parentArticleID',
+							'DeleteAll': True,
+							'lock': ['0001'],
+							'lockkey': 'detailParentParamCode'
+						}
+					]
+				},
 			] 
 		})
 
