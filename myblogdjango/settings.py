@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'articleDetail',
     'corsheaders',
     'blogAdmin',
-    'InitBlogData'
+    'InitBlogData',
+    'music',
 ]
 
 MIDDLEWARE = [
